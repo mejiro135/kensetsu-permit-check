@@ -109,6 +109,7 @@ p { margin: 0 0 1em; }
 .answer-list { display: grid; gap: 12px; margin-top: 24px; }
 .answer-button { text-align: left; color: var(--ink); background: #fff; border: 2px solid var(--line); padding: 15px 16px; }
 .answer-button:hover, .answer-button:focus-visible { border-color: var(--brand); background: var(--soft); outline: none; }
+.answer-button.is-selected, .answer-button.is-selected:disabled { color: var(--brand-dark); background: var(--soft); border-color: var(--brand); box-shadow: 0 0 0 3px rgba(32,181,107,.16); opacity: 1; }
 .answer-button:active, .primary-button:active, .secondary-button:active { transform: translateY(1px); }
 .navigation-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 26px; }
 .navigation-row.single-back { justify-content: flex-start; }
