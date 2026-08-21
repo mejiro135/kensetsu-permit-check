@@ -216,7 +216,23 @@ p { margin: 0 0 1em; }
 @media (min-width: 640px) {
   .app-shell { padding-top: 36px; }
   .card { padding: 36px 40px; }
-  .hero-mascot { margin-right: 8px; }
+  .hero-mascot {
+    width: 174px;
+    max-width: 174px;
+    height: 180.19px !important;
+    flex: 0 0 174px;
+  }
+  .result-mascot {
+    width: 196px;
+    max-width: 196px;
+    height: 202.91px !important;
+  }
+  .result-complete-mascot {
+    width: 132px;
+    max-width: 132px;
+    height: 136.70px !important;
+    flex: 0 0 132px;
+  }
   .result-grid { grid-template-columns: 1fr 1fr; }
 }
 
