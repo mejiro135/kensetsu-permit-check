@@ -49,10 +49,11 @@ function cancelPendingAdvance() {
   state.pendingAdvance = null;
   document.querySelectorAll(".answer-button").forEach(button => {
     button.classList.remove("is-selected");
+    button.removeAttribute("aria-pressed");
     button.disabled = false;
     delete button.dataset.advancing;
   });
-}
+  if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
 const statusText = { OK: "要件を満たす可能性あり", CHECK: "確認が必要です", NG: "要件を満たしていない可能性があります", UNKNOWN: "現在の回答だけでは判断できません" };
 
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
@@ -154,6 +155,7 @@ function bindQuestionEvents(q) {
     }
     button.dataset.advancing = "true";
     button.classList.add("is-selected");
+    button.setAttribute("aria-pressed", "true");
     document.querySelectorAll(".answer-button").forEach(answerButton => { answerButton.disabled = true; });
     const questionId = state.current;
     const transitionToken = state.transitionToken;
@@ -358,8 +360,13 @@ function resetDiagnosis(requireConfirmation = false) {
   document.querySelector("#show-result-button").disabled = true;
   cancelPendingAdvance();
   state.answers = {}; state.history = []; state.current = null;
+  document.querySelector("#question-content").replaceChildren();
+  document.querySelector("#result-content").replaceChildren();
   showScreen("start");
 }
 document.querySelector("#question-restart-button").addEventListener("click", () => resetDiagnosis(true));
 document.querySelector("#ready-restart-button").addEventListener("click", () => resetDiagnosis(true));
 document.querySelectorAll(".restart-button").forEach(button => button.addEventListener("click", () => resetDiagnosis(false)));
+window.addEventListener("pageshow", event => {
+  if (event.persisted) resetDiagnosis(false);
+});
