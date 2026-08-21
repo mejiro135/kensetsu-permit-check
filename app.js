@@ -41,7 +41,18 @@ const screens = {
   resultReady: document.querySelector("#result-ready-screen"),
   result: document.querySelector("#result-screen")
 };
-const state = { answers: {}, history: [], current: null };
+const state = { answers: {}, history: [], current: null, transitionToken: 0, pendingAdvance: null };
+
+function cancelPendingAdvance() {
+  state.transitionToken += 1;
+  if (state.pendingAdvance !== null) window.clearTimeout(state.pendingAdvance);
+  state.pendingAdvance = null;
+  document.querySelectorAll(".answer-button").forEach(button => {
+    button.classList.remove("is-selected");
+    button.disabled = false;
+    delete button.dataset.advancing;
+  });
+}
 const statusText = { OK: "要件を満たす可能性あり", CHECK: "確認が必要です", NG: "要件を満たしていない可能性があります", UNKNOWN: "現在の回答だけでは判断できません" };
 
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
@@ -61,6 +72,7 @@ function resetScrollPosition() {
 }
 
 function startDiagnosis() {
+  cancelPendingAdvance();
   state.answers = {}; state.history = []; state.current = null;
   goTo("q1", false);
 }
@@ -143,9 +155,13 @@ function bindQuestionEvents(q) {
     button.dataset.advancing = "true";
     button.classList.add("is-selected");
     document.querySelectorAll(".answer-button").forEach(answerButton => { answerButton.disabled = true; });
-    window.setTimeout(() => {
-      state.answers[state.current] = q.type === "qualification" ? { answer: value, qualificationName: "" } : value;
-      proceed(state.current, value);
+    const questionId = state.current;
+    const transitionToken = state.transitionToken;
+    state.pendingAdvance = window.setTimeout(() => {
+      if (transitionToken !== state.transitionToken || state.current !== questionId) return;
+      state.pendingAdvance = null;
+      state.answers[questionId] = q.type === "qualification" ? { answer: value, qualificationName: "" } : value;
+      proceed(questionId, value);
     }, 140);
   }));
   if (q.type === "qualification") document.querySelector("#qualification-next").addEventListener("click", () => {
@@ -340,6 +356,7 @@ function resetDiagnosis(requireConfirmation = false) {
   document.querySelector("#start-button").disabled = true;
   document.querySelector("#result-confirm").checked = false;
   document.querySelector("#show-result-button").disabled = true;
+  cancelPendingAdvance();
   state.answers = {}; state.history = []; state.current = null;
   showScreen("start");
 }
