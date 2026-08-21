@@ -49,16 +49,21 @@ const esc = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp
 function showScreen(name) {
   Object.entries(screens).forEach(([key, element]) => { element.hidden = key !== name; });
   resetScrollPosition();
-  window.requestAnimationFrame(resetScrollPosition);
-  window.setTimeout(resetScrollPosition, 60);
+  window.requestAnimationFrame(() => {
+    resetScrollPosition();
+    window.requestAnimationFrame(resetScrollPosition);
+  });
+  window.setTimeout(resetScrollPosition, 180);
 }
 
 function resetScrollPosition() {
+  const scrollRoot = document.scrollingElement;
+  if (scrollRoot) scrollRoot.scrollTop = 0;
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   try {
-    if (window.parent && window.parent !== window) window.parent.scrollTo(0, 0);
+    if (window.parent && window.parent !== window) window.parent.scrollTo({ top: 0, left: 0, behavior: "auto" });
   } catch {
     // 親画面を操作できない場合も、診断画面内は先頭に戻す。
   }
@@ -137,14 +142,20 @@ function bindQuestionEvents(q) {
   }
   document.querySelectorAll(".answer-button").forEach(button => button.addEventListener("click", () => {
     const value = button.dataset.value;
+    if (button.dataset.advancing === "true") return;
     if (q.type === "qualification" && value === "yes") {
       state.answers.q12 = { answer: "yes", qualificationName: state.answers.q12?.qualificationName || "" };
       document.querySelector("#qualification-entry").hidden = false;
       document.querySelector("#qualification-name").focus();
       return;
     }
-    state.answers[state.current] = q.type === "qualification" ? { answer: value, qualificationName: "" } : value;
-    proceed(state.current, value);
+    button.dataset.advancing = "true";
+    button.classList.add("is-selected");
+    document.querySelectorAll(".answer-button").forEach(answerButton => { answerButton.disabled = true; });
+    window.setTimeout(() => {
+      state.answers[state.current] = q.type === "qualification" ? { answer: value, qualificationName: "" } : value;
+      proceed(state.current, value);
+    }, 140);
   }));
   if (q.type === "qualification") document.querySelector("#qualification-next").addEventListener("click", () => {
     state.answers.q12 = { answer: "yes", qualificationName: document.querySelector("#qualification-name").value.trim() };
@@ -332,10 +343,6 @@ document.querySelector("#scope-back-button").addEventListener("click", () => { s
 document.querySelector("#result-confirm").addEventListener("change", event => { document.querySelector("#show-result-button").disabled = !event.target.checked; });
 document.querySelector("#show-result-button").addEventListener("click", showResults);
 document.querySelector("#ready-back-button").addEventListener("click", () => { showScreen("question"); renderQuestion(); });
-document.querySelector("#consult-button").addEventListener("click", event => {
-  event.preventDefault();
-  window.alert("相談先へのリンクは、本番サイトへの組み込み時に設定します。");
-});
 function resetDiagnosis(requireConfirmation = false) {
   if (requireConfirmation && !window.confirm("回答内容を消して、最初からやり直しますか？")) return;
   document.querySelector("#notice-confirm-1").checked = false;
