@@ -339,7 +339,7 @@ function showResults() {
       <p>打合せスペース、その場所を事務所として使えることを確認する書類、住居部分との区分などについて、細かな確認が必要になる場合があります。</p>
     </div>` : ""}
     ${overall.cls === "ok" ? `<div class="result-complete-message">
-      <img class="result-complete-mascot" src="assets/tiger-mascot.png" width="618" height="640" alt="胸を張ったトラのキャラクター">
+      <div class="mascot-frame result-complete-mascot-frame"><img class="result-complete-mascot" src="assets/tiger-mascot.png" width="618" height="640" alt="胸を張ったトラのキャラクター"></div>
       <div>
         <h2>チェックおつかれさまでした。</h2>
         <p>次は、実際の申請に必要な書類を確認していきましょう。</p>
