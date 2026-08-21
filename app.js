@@ -49,11 +49,7 @@ const esc = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp
 function showScreen(name) {
   Object.entries(screens).forEach(([key, element]) => { element.hidden = key !== name; });
   resetScrollPosition();
-  window.requestAnimationFrame(() => {
-    resetScrollPosition();
-    window.requestAnimationFrame(resetScrollPosition);
-  });
-  window.setTimeout(resetScrollPosition, 180);
+  window.requestAnimationFrame(resetScrollPosition);
 }
 
 function resetScrollPosition() {
@@ -62,11 +58,6 @@ function resetScrollPosition() {
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  try {
-    if (window.parent && window.parent !== window) window.parent.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  } catch {
-    // 親画面を操作できない場合も、診断画面内は先頭に戻す。
-  }
 }
 
 function startDiagnosis() {
@@ -77,8 +68,8 @@ function startDiagnosis() {
 function goTo(id, addHistory = true) {
   if (addHistory && state.current) state.history.push(state.current);
   state.current = id;
-  showScreen("question");
   renderQuestion();
+  showScreen("question");
 }
 
 function renderQuestion() {
@@ -196,7 +187,7 @@ function showResultReady() {
 function goBack() {
   if (!state.history.length) { showScreen("start"); return; }
   state.current = state.history.pop();
-  showScreen("question"); renderQuestion();
+  renderQuestion(); showScreen("question");
 }
 
 function item(status, reasons = [], display = {}) { return { status, reasons, ...display }; }
@@ -339,10 +330,10 @@ function showResults() {
 document.querySelector("#notice-confirm-1").addEventListener("change", event => { document.querySelector("#start-button").disabled = !event.target.checked; });
 document.querySelector("#start-button").addEventListener("click", startDiagnosis);
 document.querySelector("#back-button").addEventListener("click", goBack);
-document.querySelector("#scope-back-button").addEventListener("click", () => { showScreen("question"); renderQuestion(); });
+document.querySelector("#scope-back-button").addEventListener("click", () => { renderQuestion(); showScreen("question"); });
 document.querySelector("#result-confirm").addEventListener("change", event => { document.querySelector("#show-result-button").disabled = !event.target.checked; });
 document.querySelector("#show-result-button").addEventListener("click", showResults);
-document.querySelector("#ready-back-button").addEventListener("click", () => { showScreen("question"); renderQuestion(); });
+document.querySelector("#ready-back-button").addEventListener("click", () => { renderQuestion(); showScreen("question"); });
 function resetDiagnosis(requireConfirmation = false) {
   if (requireConfirmation && !window.confirm("回答内容を消して、最初からやり直しますか？")) return;
   document.querySelector("#notice-confirm-1").checked = false;
