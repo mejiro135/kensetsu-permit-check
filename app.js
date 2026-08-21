@@ -62,7 +62,19 @@ const esc = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp
 function showScreen(name) {
   Object.entries(screens).forEach(([key, element]) => { element.hidden = key !== name; });
   resetScrollPosition();
-  window.requestAnimationFrame(resetScrollPosition);
+  window.requestAnimationFrame(() => { resetScrollPosition(); notifyEmbedHeight(); });
+}
+
+function notifyEmbedHeight() {
+  if (window.parent === window) return;
+  const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+  window.parent.postMessage({ source: "kensetsu-permit-check", height }, "*");
+}
+
+if (window.parent !== window) {
+  document.documentElement.classList.add("embedded");
+  window.addEventListener("load", notifyEmbedHeight);
+  if ("ResizeObserver" in window) new ResizeObserver(notifyEmbedHeight).observe(document.body);
 }
 
 function resetScrollPosition() {

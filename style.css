@@ -287,3 +287,8 @@ p { margin: 0 0 1em; }
 }
 
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+
+/* iframe埋め込み時のみ、親ページの幅に自然に合わせる */
+html.embedded .app-shell { max-width: none; padding: 0; }
+html.embedded .card { border-radius: 0; box-shadow: none; }
