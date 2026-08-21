@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#20b56b">
+  <title>建設業許可 スタートチェック</title>
+  <link rel="stylesheet" href="style.css?v=52">
+</head>
+<body>
+  <main class="app-shell">
+    <section id="start-screen" class="screen card">
+      <div class="step-progress">診断を始める前に</div>
+      <div class="hero-title-area">
+        <div class="hero-copy">
+          <h1 class="display-title"><span>建設業許可</span><strong>スタートチェック</strong></h1>
+          <p class="title-catch">許可申請に向けた、最初の一歩。</p>
+        </div>
+        <img class="hero-mascot" src="assets/tiger-mascot.png" alt="胸を張ったトラのキャラクター">
+      </div>
+      <p class="lead">最大20問の質問に答えると、建設業許可の主な要件について、現在の状況を簡単に確認できます。</p>
+
+      <div class="target-box" aria-label="診断対象">
+        <strong class="target-summary"><span>一般建設業</span><span class="target-separator" aria-hidden="true">／</span><span>都道府県知事許可</span><span class="target-separator" aria-hidden="true">／</span><span>新規申請</span></strong>
+        <p>特定建設業・国土交通大臣許可は対象外です。</p>
+      </div>
+
+      <div class="notice-box compact-notice step-notice" aria-labelledby="start-notice-title">
+        <span class="notice-step">確認</span>
+        <h2 id="start-notice-title">この診断について</h2>
+        <p>この診断は、入力された内容から、建設業許可の主な要件を確認する簡易的な診断です。結果はあくまで参考情報であり、許可が取れることを保証するものではありません。</p>
+        <p>本診断の結果だけで申請の可否を判断せず、申請を検討・準備する際は、必ず事前に申請先の都道府県の窓口に確認するか、行政書士にご相談ください。</p>
+      </div>
+
+      <label class="confirm-row">
+        <input id="notice-confirm-1" type="checkbox">
+        <span>この診断が参考情報であり、申請の検討・準備には個別確認が必要なことを確認しました</span>
+      </label>
+
+      <button id="start-button" class="primary-button" type="button" disabled>診断を開始する</button>
+    </section>
+
+    <section id="question-screen" class="screen card" hidden>
+      <div class="progress-head">
+        <span id="progress-text">質問 1（最大20問）</span>
+        <span id="progress-percent" aria-hidden="true">5%</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="20" aria-valuenow="1">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div id="question-content"></div>
+      <div class="navigation-row">
+        <button id="back-button" class="secondary-button" type="button">戻る</button>
+        <button id="question-restart-button" class="restart-link" type="button">最初からやり直す</button>
+      </div>
+    </section>
+
+    <section id="out-of-scope-screen" class="screen card" hidden>
+      <div class="eyebrow">診断対象外</div>
+      <h1>この診断の対象外です</h1>
+      <div id="out-of-scope-message" class="notice-box"></div>
+      <p>条件に合う許可区分について、申請先の最新案内をご確認ください。</p>
+      <div class="stacked-actions">
+        <button id="scope-back-button" class="secondary-button" type="button">前の質問に戻る</button>
+        <button class="restart-button primary-button" type="button">最初からやり直す</button>
+      </div>
+    </section>
+
+    <section id="result-ready-screen" class="screen card result-ready-screen" hidden>
+      <img class="result-mascot" src="assets/tiger-mascot.png" alt="胸を張ったトラのキャラクター">
+      <div class="eyebrow result-eyebrow">主な項目のチェック完了</div>
+      <h1 class="result-ready-title">結果を見て、次の一歩へ</h1>
+      <p class="result-ready-lead">現在の準備状況がまとまりました。</p>
+      <h2 class="final-check-heading">結果を見る前にご確認ください</h2>
+      <div class="final-confirm-box">
+        <p>この結果はあくまで参考情報であり、実際の許可審査と異なる場合があります。</p>
+        <p>診断結果だけで申請の可否を判断せず、申請を検討・準備する際は、必ず事前に申請先の都道府県の窓口に確認するか、行政書士にご相談ください。</p>
+      </div>
+      <label class="confirm-row final-confirm-row">
+        <input id="result-confirm" type="checkbox">
+        <span>上記の内容を確認しました</span>
+      </label>
+      <button id="show-result-button" class="show-result-button reveal-result-button" type="button" disabled>診断結果を見る <span aria-hidden="true">→</span></button>
+      <div class="navigation-row ready-navigation">
+        <button id="ready-back-button" class="secondary-button" type="button">最後の質問に戻る</button>
+        <button id="ready-restart-button" class="restart-link" type="button">最初からやり直す</button>
+      </div>
+    </section>
+
+    <section id="result-screen" class="screen card" hidden>
+      <div class="eyebrow">診断結果</div>
+      <div id="result-content"></div>
+      <div class="result-final-actions">
+        <button class="restart-button result-restart-button" type="button">最初からやり直す</button>
+        <a id="consult-button" class="consult-button" href="#">行政書士に相談する <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+  <script src="app.js?v=52"></script>
+</body>
+</html>
