@@ -54,6 +54,7 @@ function cancelPendingAdvance() {
     delete button.dataset.advancing;
   });
   if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+}
 const statusText = { OK: "要件を満たす可能性あり", CHECK: "確認が必要です", NG: "要件を満たしていない可能性があります", UNKNOWN: "現在の回答だけでは判断できません" };
 
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
@@ -336,7 +337,7 @@ function showResults() {
       <p>打合せスペース、その場所を事務所として使えることを確認する書類、住居部分との区分などについて、細かな確認が必要になる場合があります。</p>
     </div>` : ""}
     ${overall.cls === "ok" ? `<div class="result-complete-message">
-      <img class="result-complete-mascot" src="assets/tiger-mascot.png" alt="胸を張ったトラのキャラクター">
+      <img class="result-complete-mascot" src="assets/tiger-mascot.png" width="618" height="640" alt="胸を張ったトラのキャラクター">
       <div>
         <h2>チェックおつかれさまでした。</h2>
         <p>次は、実際の申請に必要な書類を確認していきましょう。</p>
