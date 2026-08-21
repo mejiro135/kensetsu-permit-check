@@ -76,6 +76,8 @@ function resetScrollPosition() {
 function startDiagnosis() {
   cancelPendingAdvance();
   state.answers = {}; state.history = []; state.current = null;
+  document.querySelector("#question-content").replaceChildren();
+  document.querySelector("#result-content").replaceChildren();
   goTo("q1", false);
 }
 
@@ -368,6 +370,6 @@ function resetDiagnosis(requireConfirmation = false) {
 document.querySelector("#question-restart-button").addEventListener("click", () => resetDiagnosis(true));
 document.querySelector("#ready-restart-button").addEventListener("click", () => resetDiagnosis(true));
 document.querySelectorAll(".restart-button").forEach(button => button.addEventListener("click", () => resetDiagnosis(false)));
-window.addEventListener("pageshow", event => {
-  if (event.persisted) resetDiagnosis(false);
+window.addEventListener("pageshow", () => {
+  resetDiagnosis(false);
 });
