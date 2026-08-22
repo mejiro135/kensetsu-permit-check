@@ -292,3 +292,6 @@ p { margin: 0 0 1em; }
 /* iframe埋め込み時のみ、親ページの幅に自然に合わせる */
 html.embedded .app-shell { max-width: none; padding: 0; }
 html.embedded .card { border-radius: 0; box-shadow: none; }
+
+html.embedded, html.embedded body { min-height: 0; }
+html.embedded body { overflow: hidden; }

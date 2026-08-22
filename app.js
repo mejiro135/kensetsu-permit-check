@@ -67,7 +67,8 @@ function showScreen(name) {
 
 function notifyEmbedHeight() {
   if (window.parent === window) return;
-  const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+  const appShell = document.querySelector(".app-shell");
+  const height = appShell ? Math.ceil(appShell.getBoundingClientRect().height) : Math.ceil(document.documentElement.scrollHeight);
   window.parent.postMessage({ source: "kensetsu-permit-check", height }, "*");
 }
 
