@@ -190,6 +190,10 @@ function bindQuestionEvents(q) {
       const qualificationEntry = document.querySelector("#qualification-entry");
       qualificationEntry.hidden = false;
       window.requestAnimationFrame(() => {
+        if (window.parent === window) {
+          qualificationEntry.scrollIntoView({ block: "start", behavior: "smooth" });
+          return;
+        }
         notifyEmbedHeight();
         window.requestAnimationFrame(() => notifyEmbedScrollTarget(qualificationEntry));
       });
