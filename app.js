@@ -73,7 +73,13 @@ function notifyEmbedHeight() {
 
 if (window.parent !== window) {
   document.documentElement.classList.add("embedded");
-  window.addEventListener("load", notifyEmbedHeight);
+  window.addEventListener("load", () => {
+    notifyEmbedHeight();
+    window.setTimeout(notifyEmbedHeight, 100);
+  });
+  window.addEventListener("message", event => {
+    if (event.data && event.data.type === "kensetsu-permit-check:request-height") notifyEmbedHeight();
+  });
   if ("ResizeObserver" in window) new ResizeObserver(notifyEmbedHeight).observe(document.body);
 }
 
