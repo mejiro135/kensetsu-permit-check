@@ -60,6 +60,7 @@ const statusText = { OK: "要件を満たす可能性あり", CHECK: "確認が�
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
 
 function showScreen(name) {
+  if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   Object.entries(screens).forEach(([key, element]) => { element.hidden = key !== name; });
   resetScrollPosition();
   window.requestAnimationFrame(() => { resetScrollPosition(); notifyEmbedHeight(); });
@@ -172,7 +173,6 @@ function bindQuestionEvents(q) {
     if (q.type === "qualification" && value === "yes") {
       state.answers.q12 = { answer: "yes", qualificationName: state.answers.q12?.qualificationName || "" };
       document.querySelector("#qualification-entry").hidden = false;
-      document.querySelector("#qualification-name").focus();
       return;
     }
     button.dataset.advancing = "true";
