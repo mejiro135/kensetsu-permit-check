@@ -63,7 +63,11 @@ function showScreen(name) {
   if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   Object.entries(screens).forEach(([key, element]) => { element.hidden = key !== name; });
   resetScrollPosition();
-  window.requestAnimationFrame(() => { resetScrollPosition(); notifyEmbedHeight(); });
+  window.requestAnimationFrame(() => {
+    resetScrollPosition();
+    notifyEmbedHeight();
+    notifyEmbedScreenChange();
+  });
 }
 
 function notifyEmbedHeight() {
@@ -71,6 +75,17 @@ function notifyEmbedHeight() {
   const appShell = document.querySelector(".app-shell");
   const height = appShell ? Math.ceil(appShell.getBoundingClientRect().height) : Math.ceil(document.documentElement.scrollHeight);
   window.parent.postMessage({ source: "kensetsu-permit-check", height }, "*");
+}
+
+function notifyEmbedScreenChange() {
+  if (window.parent === window) return;
+  window.parent.postMessage({ source: "kensetsu-permit-check", type: "kensetsu-permit-check:screen-change" }, "*");
+}
+
+function notifyEmbedScrollTarget(element) {
+  if (window.parent === window || !element) return;
+  const top = Math.max(0, Math.round(element.getBoundingClientRect().top));
+  window.parent.postMessage({ source: "kensetsu-permit-check", type: "kensetsu-permit-check:scroll-target", top }, "*");
 }
 
 if (window.parent !== window) {
@@ -172,7 +187,12 @@ function bindQuestionEvents(q) {
     if (button.dataset.advancing === "true") return;
     if (q.type === "qualification" && value === "yes") {
       state.answers.q12 = { answer: "yes", qualificationName: state.answers.q12?.qualificationName || "" };
-      document.querySelector("#qualification-entry").hidden = false;
+      const qualificationEntry = document.querySelector("#qualification-entry");
+      qualificationEntry.hidden = false;
+      window.requestAnimationFrame(() => {
+        notifyEmbedHeight();
+        window.requestAnimationFrame(() => notifyEmbedScrollTarget(qualificationEntry));
+      });
       return;
     }
     button.dataset.advancing = "true";
