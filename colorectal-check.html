@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="大腸がん薬物療法の投与前確認事項を短時間で整理する試作チェックツール">
+  <title>大腸がん薬物療法 投与前チェック</title>
+  <style>
+    :root { --ink:#183240; --muted:#60737d; --line:#dbe5e8; --blue:#176b87; --blue-dark:#105269; --pale:#f2f8f9; --alert:#a94819; --alert-bg:#fff4eb; --shadow:0 8px 24px rgba(19,51,64,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:#f5f8f8; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",Meiryo,sans-serif; line-height:1.65; }
+    button { font:inherit; cursor:pointer; }
+    .app { width:min(100%,720px); min-height:100vh; margin:auto; padding:20px 16px calc(92px + env(safe-area-inset-bottom)); }
+    .screen { display:none; animation:fade .18s ease-out; }
+    .screen.active { display:block; }
+    @keyframes fade { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+    .brand { display:flex; gap:10px; align-items:center; color:var(--blue); font-weight:700; font-size:.88rem; letter-spacing:.04em; margin:3px 0 36px; }
+    .brand-mark { width:30px; height:30px; display:grid; place-items:center; border-radius:9px; background:var(--blue); color:#fff; font-size:1rem; }
+    h1 { font-size:clamp(1.85rem,8vw,2.55rem); line-height:1.27; letter-spacing:.02em; margin:0 0 18px; }
+    h2 { font-size:1.32rem; line-height:1.5; margin:0 0 18px; }
+    p { margin:0 0 15px; }
+    .lead { color:#405660; font-size:1.02rem; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:19px; box-shadow:var(--shadow); margin:19px 0; }
+    .card h3 { font-size:.96rem; margin:0 0 8px; color:#315260; }
+    .card ul { margin:8px 0 0; padding-left:1.18em; color:#4a6069; font-size:.91rem; }
+    .notice { background:#eef6f8; border-left:4px solid var(--blue); padding:13px 14px; color:#385963; font-size:.9rem; border-radius:0 10px 10px 0; }
+    .btn { min-height:56px; width:100%; border:0; border-radius:12px; padding:13px 18px; color:#fff; background:var(--blue); font-weight:700; box-shadow:0 4px 10px rgba(23,107,135,.18); transition:.15s; }
+    .btn:hover { background:var(--blue-dark); } .btn:focus-visible,.answer:focus-visible { outline:3px solid #6eb1c6; outline-offset:3px; }
+    .start { margin-top:25px; font-size:1.04rem; }
+    .progress-wrap { margin-bottom:29px; } .progress-text { display:flex; justify-content:space-between; font-size:.82rem; color:var(--muted); margin-bottom:7px; } .progress { height:7px; background:#dce8ea; border-radius:999px; overflow:hidden; } .progress > div { height:100%; background:var(--blue); border-radius:inherit; transition:width .2s; }
+    .question-label { color:var(--blue); font-size:.85rem; font-weight:700; letter-spacing:.04em; margin-bottom:7px; }
+    .hint { background:var(--pale); color:#42606a; padding:13px 15px; border-radius:11px; margin:0 0 18px; font-size:.91rem; } .hint ul { margin:6px 0 0; padding-left:1.15em; }
+    .answers { display:grid; gap:10px; } .answer { text-align:left; width:100%; min-height:58px; padding:13px 16px; background:#fff; border:1px solid #bfd0d5; border-radius:12px; color:var(--ink); font-weight:650; transition:.12s; } .answer:hover { border-color:var(--blue); background:#f6fbfc; } .answer small { display:block; margin-top:2px; color:var(--alert); font-weight:600; }
+    .nav { display:flex; gap:10px; margin-top:23px; } .back { width:auto; color:#44616b; background:transparent; box-shadow:none; border:1px solid #b9cbd0; } .back:hover { background:#eaf2f4; }
+    .restart { position:fixed; z-index:5; bottom:max(14px,env(safe-area-inset-bottom)); right:16px; border:1px solid #bed0d5; border-radius:999px; background:#fff; color:#315460; padding:10px 14px; font-size:.84rem; font-weight:700; box-shadow:0 3px 13px rgba(18,48,60,.12); }
+    .result-head { padding:20px; background:#eaf5f7; border-radius:16px; margin-bottom:18px; } .result-head.alert { background:var(--alert-bg); } .result-head h2 { margin-bottom:8px; }
+    .alert-card { border-color:#f0bf9e; } .alert-card h3 { color:var(--alert); } .check-list { list-style:none; padding:0; margin:0; } .check-list li { padding:12px 0; border-bottom:1px solid #e5ecee; } .check-list li:last-child { border-bottom:0; } .tag { display:inline-block; font-size:.76rem; background:#fff0e6; color:#93421b; border-radius:999px; padding:2px 8px; margin-right:6px; font-weight:700; }
+    .refs { font-size:.84rem; color:#546a73; } .refs p { margin-bottom:7px; } .small-disclaimer { font-size:.84rem; color:#596d75; }
+    @media (min-width:700px) { .app { padding-top:34px; } .card { padding:23px; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="top" class="screen active" aria-labelledby="main-title">
+      <div class="brand"><span class="brand-mark">＋</span>ONCOLOGY CHECK · TRIAL</div>
+      <h1 id="main-title">大腸がん薬物療法<br>投与前チェック</h1>
+      <p class="lead">大腸がん薬物療法における、診察時・投与前の確認事項を短時間で整理するためのチェックツールです。</p>
+      <div class="card refs"><h3>参考資料</h3><p>以下の資料を参考に構成した試作版です。</p><ul><li>National Cancer Institute（NCI）大腸がん治療情報</li><li>NCI Common Terminology Criteria for Adverse Events（CTCAE）</li><li>日本臨床腫瘍学会（JSMO）関連ガイドライン・ガイダンス</li><li>eviQ Drug Treatment Protocols / Guidance for Protocol Development</li></ul></div>
+      <div class="notice">本ツールは診療判断を代替するものではありません。投与可否、休薬、減量、治療変更等は、最新の添付文書、各施設の基準、ガイドラインおよび患者個々の状態を踏まえて医師が判断してください。</div>
+      <button class="btn start" type="button" onclick="startCheck()">チェックを開始する</button>
+    </section>
+    <section id="question" class="screen" aria-live="polite"></section>
+    <section id="result" class="screen" aria-live="polite"></section>
+  </main>
+  <button class="restart" type="button" onclick="restart()">最初からやり直す</button>
+  <script>
+    const common = [
+      { id:'purpose', title:'今回の治療目的を選択してください。', options:['術後補助療法','術前治療','切除不能・進行再発','その他'] },
+      { id:'regimen', title:'今回のレジメンを選択してください。', options:[['CAPOX / XELOX',''],['mFOLFOX6',''],['FOLFIRI','試作版では未実装'],['FOLFOXIRI','試作版では未実装']] },
+      { id:'condition', title:'前回投与時と比べ、全身状態に明らかな変化がありますか？', hint:['PS低下','食事・水分摂取低下','強い倦怠感','脱水','新規症状'], options:['なし','あり','判断保留'], flag:{'あり':'全身状態の確認','判断保留':'全身状態の確認'} },
+      { id:'infection', title:'発熱または感染を疑う症状がありますか？', hint:['発熱','悪寒','咳・呼吸器症状','排尿時症状','その他の感染兆候'], options:['なし','あり'], flag:{'あり':'感染症・FN等の評価を優先'} },
+      { id:'cbc', title:'血算に確認が必要な項目がありますか？', hint:['好中球','白血球','血小板','Hb'], options:['問題なし','基準外あり','未確認'], flag:{'基準外あり':'レジメン・施設の休薬／減量基準を確認','未確認':'レジメン・施設の休薬／減量基準を確認'} },
+      { id:'renal', title:'腎機能に問題がありますか？', hint:['Cr','eGFR','CrCl','前回値からの変化','脱水'], options:['問題なし','低下あり','未確認'], flag:{'低下あり':'腎機能および薬剤用量の確認','未確認':'腎機能および薬剤用量の確認'} },
+      { id:'liver', title:'肝機能に問題がありますか？', hint:['AST','ALT','Bil','その他'], options:['問題なし','基準外あり','未確認'], flag:{'基準外あり':'肝機能およびレジメン基準の確認','未確認':'肝機能およびレジメン基準の確認'} }
+    ];
+    const capox = [
+      {id:'hfs', title:'手足症候群を疑う症状がありますか？', hint:['手足の赤み','痛み','腫れ','皮膚剥離','日常生活への影響'], options:['なし','軽度','日常生活への影響あり','Grade不明'], flag:{'軽度':'カペシタビン関連手足症候群・CTCAE Gradeを確認','日常生活への影響あり':'カペシタビン関連手足症候群・CTCAE Gradeを確認','Grade不明':'カペシタビン関連手足症候群・CTCAE Gradeを確認'}},
+      {id:'diarrhea', title:'前回治療後に下痢がありましたか？', options:['なし','Grade 1','Grade 2','Grade 3以上','Grade不明'], flag:{'Grade 2':'下痢の重症度および休薬・減量基準を確認','Grade 3以上':'下痢の重症度および休薬・減量基準を確認','Grade不明':'下痢の重症度および休薬・減量基準を確認'}},
+      {id:'neuropathy', title:'末梢神経障害がありますか？', hint:['手足のしびれ','冷刺激による症状','持続する症状','日常生活への影響'], options:['なし','一過性','持続している','日常生活に影響あり'], flag:{'持続している':'オキサリプラチン関連末梢神経障害を確認','日常生活に影響あり':'オキサリプラチン関連末梢神経障害を確認'}}
+    ];
+    const folfox = [
+      {id:'neuropathy', title:'末梢神経障害がありますか？', options:['なし','冷刺激による症状のみ','持続するしびれ','日常生活への影響あり'], flag:{'冷刺激による症状のみ':'オキサリプラチン関連末梢神経障害を確認','持続するしびれ':'オキサリプラチン関連末梢神経障害を確認','日常生活への影響あり':'オキサリプラチン関連末梢神経障害を確認'}},
+      {id:'mucositis', title:'口内炎・粘膜障害がありますか？', options:['なし','軽度','中等度以上','Grade不明'], flag:{'軽度':'粘膜障害・CTCAE Gradeを確認','中等度以上':'粘膜障害・CTCAE Gradeを確認','Grade不明':'粘膜障害・CTCAE Gradeを確認'}},
+      {id:'port', title:'持続静注またはポートに関する確認事項がありますか？', options:['問題なし','確認事項あり'], flag:{'確認事項あり':'持続静注・ポート関連事項を確認'}}
+    ];
+    const labels = {purpose:'治療目的',regimen:'レジメン',condition:'全身状態',infection:'発熱・感染',cbc:'血算',renal:'腎機能',liver:'肝機能',hfs:'手足症候群',diarrhea:'下痢',neuropathy:'末梢神経障害',mucositis:'口内炎・粘膜障害',port:'持続静注・ポート関連'};
+    let questions=[], index=0, answers={};
+    const qScreen=document.getElementById('question'), rScreen=document.getElementById('result');
+    function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+    function startCheck(){ questions=[...common]; index=0; answers={}; show('question'); renderQuestion(); }
+    function pick(value){ const q=questions[index]; answers[q.id]=value; if(q.id==='regimen'){ if(value==='FOLFIRI'||value==='FOLFOXIRI'){ showUnsupported(value); return; } questions=[...common,...(value==='CAPOX / XELOX'?capox:folfox)]; } if(index<questions.length-1){index++;renderQuestion();} else renderResult(); }
+    function renderQuestion(){ const q=questions[index], total=questions.length, hint=q.hint?`<div class="hint">確認項目<ul>${q.hint.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''; const options=q.options.map(o=>{const [v,note]=Array.isArray(o)?o:[o,''];return `<button class="answer" type="button" onclick='pick(${JSON.stringify(v)})'>${v}${note?`<small>${note}</small>`:''}</button>`}).join(''); qScreen.innerHTML=`<div class="progress-wrap"><div class="progress-text"><span>投与前チェック</span><span>質問 ${index+1} / ${total}</span></div><div class="progress"><div style="width:${((index+1)/total)*100}%"></div></div></div><div class="question-label">質問 ${index+1}</div><h2>${q.title}</h2>${hint}<div class="answers">${options}</div><div class="nav">${index?'<button class="btn back" type="button" onclick="goBack()">戻る</button>':''}</div>`; }
+    function goBack(){ if(index>0){ index--; delete answers[questions[index].id]; renderQuestion(); } }
+    function showUnsupported(regimen){ rScreen.innerHTML=`<div class="result-head alert"><h2>${regimen}</h2><p>このレジメンは試作版では未実装です。</p></div><div class="card"><p>初期版では、CAPOX / XELOX と mFOLFOX6 の投与前確認フローを実装しています。</p></div><button class="btn" type="button" onclick="restart()">トップへ戻る</button>`; show('result'); }
+    function renderResult(){ const flags=[]; questions.forEach(q=>{const a=answers[q.id];if(q.flag&&q.flag[a])flags.push({label:labels[q.id],answer:a,action:q.flag[a]});}); const selected=Object.entries(answers).filter(([id,val])=>id!=='purpose'&&id!=='regimen'&&val && !['なし','問題なし','Grade 1','一過性'].includes(val)); const details=selected.length?`<div class="card alert-card"><h3>本日の確認事項</h3><ul class="check-list">${selected.map(([id,val])=>`<li><span class="tag">${labels[id]}</span>${val}</li>`).join('')}</ul></div><div class="card"><h3>関連する確認項目</h3><ul class="check-list">${[...new Set(flags.map(x=>x.action))].map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''; const good=!selected.length?`<div class="result-head"><h2>大きな確認項目なし</h2><p>今回入力された範囲では、主要な確認項目に大きな注意事項は選択されていません。</p></div><div class="notice">投与前に最新の検査結果、患者状態、添付文書、施設基準等を確認してください。</div>`:`<div class="result-head alert"><h2>確認項目あり</h2><p>選択された注意項目を、投与前の確認事項として整理しました。</p></div>${details}`; rScreen.innerHTML=`${good}<div class="card refs"><h3>参考資料</h3><ul><li>NCI 大腸がん治療情報</li><li>NCI CTCAE</li><li>JSMO関連ガイドライン・ガイダンス</li><li>eviQ Drug Treatment Protocols / Guidance for Protocol Development</li></ul></div><p class="small-disclaimer">本ツールは診療支援用の試作品です。特定患者に対する診断、治療方針、投与可否、休薬・減量等を決定するものではありません。</p><div class="nav"><button class="btn back" type="button" onclick="goBack()">戻る</button><button class="btn" type="button" onclick="restart()">トップへ戻る</button></div>`; show('result'); }
+    function restart(){ questions=[]; index=0; answers={}; show('top'); }
+  </script>
+</body>
+</html>
